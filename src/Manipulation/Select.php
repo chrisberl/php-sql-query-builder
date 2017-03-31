@@ -407,7 +407,15 @@ class Select extends AbstractBaseQuery
      */
     public function getGroupBy()
     {
-        return SyntaxFactory::createColumns($this->groupBy, $this->getTable());
+        $joinedGroupByColumns = [];
+        foreach ($this->getAllJoins() as $join) {
+            $joinedGroupByColumns = \array_merge($joinedGroupByColumns, $join->getGroupBy());
+        }
+
+        return \array_merge(
+            SyntaxFactory::createColumns($this->groupBy, $this->getTable()),
+            $joinedGroupByColumns
+        );
     }
 
     /**
